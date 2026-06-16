@@ -1,0 +1,1 @@
+# An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-and-Image-Synthesis
