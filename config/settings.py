@@ -47,7 +47,7 @@ VIDEO_FPS: int = 24
 
 
 # ── LLM Settings ──────────────────────────────────────────────────────────────
-GROQ_MODEL: str = "llama3-70b-8192"          # Fast, free, high quality
+GROQ_MODEL: str = "llama-3.1-8b-instant"          # Fast, free, high quality
 GROQ_TEMPERATURE: float = 0.7
 GROQ_MAX_TOKENS: int = 300                   # ~150 words = ~10 sec narration
 

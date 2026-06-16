@@ -19,7 +19,7 @@ def get_script_prompt(fighter_name: str) -> dict:
     WHY THIS WORKS:
     - Role assignment ("world-class documentary narrator") shifts the model
       toward authoritative, cinematic language rather than encyclopedic text.
-    - Explicit word count (70-85 words) maps precisely to ~10 seconds of TTS
+    - Explicit word count (10-20 words) maps precisely to ~10 seconds of TTS
       at average English speaking pace (130-150 words/minute).
     - Emotional arc instruction (intro → achievement → legacy) gives the
       script a three-act mini-structure even in 10 seconds.
@@ -33,7 +33,7 @@ emotionally resonant, and deeply respectful.
 
 STRICT OUTPUT RULES:
 - Output ONLY the narration script text. No titles, no notes, no explanations.
-- Exactly 70 to 85 words. Not one word more. Not one word less.
+- Exactly 10 to 20 words. Not one word more. Neither one word less, nor one word more.
 - No bullet points, no headers, no markdown formatting.
 - Present tense for timeless facts, past tense for historical events.
 - End with a powerful, memorable closing sentence about legacy."""

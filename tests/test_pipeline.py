@@ -243,8 +243,8 @@ def test_placeholder_image():
         assert result.stat().st_size > 1000, "Placeholder image too small"
 
         from PIL import Image
-        img = Image.open(str(result))
-        assert img.size[0] > 0, "Invalid image width"
+        with Image.open(result) as img:
+            assert img.size[0] > 0, "Invalid image width"
     finally:
         if tmp_path.exists():
             tmp_path.unlink()

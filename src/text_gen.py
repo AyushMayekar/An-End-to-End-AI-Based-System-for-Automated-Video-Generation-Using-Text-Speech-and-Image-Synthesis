@@ -6,7 +6,7 @@ Module 1: Script Generation via LLM
 WHAT:  Generates a 70-85 word narration script for the freedom fighter intro.
 WHY:   The script is the backbone — audio timing, image selection, and video
        pacing all depend on a well-structured, correctly-lengthed script.
-HOW:   Primary: Groq API (llama3-70b) — free, 30 req/min, sub-2-second latency.
+HOW:   Primary: Groq API (llama-3.1-8b-instant) — free, 30 req/min, sub-2-second latency.
        Fallback: Google Gemini 1.5 Flash — free tier, 15 RPM, 1M tokens/day.
 """
 
@@ -65,7 +65,7 @@ def _generate_with_groq(prompt: dict, fighter_name: str) -> str:
     Generate script using Groq API.
 
     Free tier: 30 requests/minute, 14,400 req/day.
-    Model: llama3-70b-8192 — best quality on free tier.
+    Model: llama-3.1-8b-instant — best quality on free tier.
     """
     try:
         from groq import Groq

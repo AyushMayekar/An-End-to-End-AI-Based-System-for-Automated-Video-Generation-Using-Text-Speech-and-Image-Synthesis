@@ -28,6 +28,7 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
+
 from config import settings
 from utils.logger import log
 from utils.file_utils import list_images
@@ -139,7 +140,18 @@ def assemble_video(
     if outro_overlay:
         all_layers.append(outro_overlay)
 
+    log.debug(f"video.duration = {video.duration}")
+
+    if title_overlay:
+        log.debug(f"title_overlay.duration = {title_overlay.duration}")
+
+    if outro_overlay:
+        log.debug(f"outro_overlay.duration = {outro_overlay.duration}")
+
+
     final_video = CompositeVideoClip(all_layers)
+    final_video = final_video.with_duration(video.duration)
+    log.debug(f"final_video.duration = {final_video.duration}")
 
     # ── Step 8: Attach audio ───────────────────────────────────────────────────
     log.debug("Attaching audio...")
@@ -206,9 +218,10 @@ def _create_image_clip_with_kenburns(
     width, height = resolution
 
     # Load and resize image to video resolution
-    img = Image.open(str(img_path)).convert("RGB")
-    img = img.resize((width, height), Image.LANCZOS)
-    img_array = np.array(img)
+    with Image.open(img_path) as img:
+        img = img.convert("RGB")
+        img = img.resize((width, height), Image.LANCZOS)
+        img_array = np.array(img)
 
     zoom_direction = "in" if frame_index % 2 == 0 else "out"
     zoom_intensity = 0.05  # 5% zoom — subtle but visible
@@ -309,6 +322,16 @@ def _create_title_overlay(
 
         clip = ImageClip(rgba_array, transparent=True)
 
+        clip = clip.with_duration(show_duration)
+        clip = clip.with_start(show_start)
+        clip = clip.with_opacity(0.95)
+
+        clip = clip.with_effects([
+            vfx.FadeIn(0.4),
+            vfx.FadeOut(0.4),
+        ])
+
+        log.debug(f"title clip duration: {clip.duration}")
         log.debug("Title overlay created successfully.")
         return clip
 
@@ -346,7 +369,19 @@ def _create_outro_overlay(
         draw.text((text_x, text_y), text, font=font, fill=(255, 255, 255, 230))
 
         rgba_array = np.array(canvas)
+        show_start = max(0, video_duration - show_duration - 0.2)
         clip = ImageClip(rgba_array, transparent=True)
+
+        clip = clip.with_duration(show_duration)
+        clip = clip.with_start(show_start)
+        clip = clip.with_opacity(0.95)
+
+        clip = clip.with_effects([
+            vfx.FadeIn(0.4),
+            vfx.FadeOut(0.4),
+        ])
+
+        log.debug(f"outro clip duration: {clip.duration}")
         return clip
 
     except Exception as e:

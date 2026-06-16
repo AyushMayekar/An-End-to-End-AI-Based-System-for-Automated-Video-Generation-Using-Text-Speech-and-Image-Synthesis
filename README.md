@@ -285,7 +285,7 @@ freedom_fighter_video/
 
 | Component | Tool | Why Free |
 |-----------|------|---------|
-| Script LLM | Groq (llama3-70b) | 30 req/min free, no credit card |
+| Script LLM | Groq (llama-3.1-8b-instant) | 30 req/min free, no credit card |
 | TTS | gTTS (Google) | Free, unlimited, no key needed |
 | Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
 | Video Assembly | MoviePy | Open source, CPU-only |

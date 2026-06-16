@@ -107,6 +107,7 @@ logs/
 assets/images/
 assets/audio/
 assets/output/
+assets/
 
 # Optional: ignore temporary music files
 
