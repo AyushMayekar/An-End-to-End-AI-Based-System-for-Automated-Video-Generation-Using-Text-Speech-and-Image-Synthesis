@@ -69,13 +69,16 @@ def assemble_video(
     audio_clip = AudioFileClip(str(audio_path))
     total_duration = audio_clip.duration
     log.info(f"  Audio duration: {total_duration:.1f}s")
-
-    # Add 0.5s buffer for end card
-    video_duration = total_duration + 0.5
+    CROSSFADE_DURATION = 0.3  # seconds
+    video_duration = total_duration + settings.VIDEO_END_BUFFER
 
     # ── Step 2: Calculate per-image duration ──────────────────────────────────
     n_images = len(image_paths)
-    seconds_per_image = video_duration / n_images
+    effective_duration = (
+    video_duration
+    + CROSSFADE_DURATION * (n_images - 1)
+    )
+    seconds_per_image = effective_duration/ n_images
     log.debug(f"  Duration per image: {seconds_per_image:.2f}s")
 
     # ── Step 3: Create image clips with Ken Burns effect ──────────────────────
@@ -93,13 +96,12 @@ def assemble_video(
 
     # ── Step 4: Concatenate with crossfade transitions ─────────────────────────
     log.debug("Concatenating clips with crossfade transitions...")
-    CROSSFADE_DURATION = 0.3  # seconds
 
     final_clips = []
     for i, clip in enumerate(image_clips):
         effects = []
         if i == 0: 
-            effects.append(vfx.FadeIn(0.5)) 
+            effects.append(vfx.FadeIn(0.05)) 
         if i == len(image_clips) - 1: 
             effects.append(vfx.FadeOut(0.5)) 
         if i > 0: 
@@ -155,12 +157,21 @@ def assemble_video(
 
     # ── Step 8: Attach audio ───────────────────────────────────────────────────
     log.debug("Attaching audio...")
-    # Trim audio to match video duration exactly
-    if audio_clip.duration > final_video.duration:
-        audio_clip = audio_clip.subclipped(0, final_video.duration)
+
+    required_duration = (
+        audio_clip.duration + settings.VIDEO_END_BUFFER
+    )
+
+    if final_video.duration < required_duration:
+        log.warning(
+            f"Extending video duration from "
+            f"{final_video.duration:.2f}s to "
+            f"{required_duration:.2f}s"
+        )
+
+        final_video = final_video.with_duration(required_duration)
 
     final_video = final_video.with_audio(audio_clip)
-
     # ── Step 9: Export ─────────────────────────────────────────────────────────
     log.info("Exporting final video (this may take 1-3 minutes on CPU)...")
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -359,11 +370,15 @@ def _create_outro_overlay(
         font_size = int(height * 0.05)
         font = _get_font(font_size)
 
-        text = "Jai Hind"
+        text = "JAI HIND!!!"
+        font_size = int(height * 0.2)
         text_bbox = draw.textbbox((0, 0), text, font=font)
+
         text_w = text_bbox[2] - text_bbox[0]
+        text_h = text_bbox[3] - text_bbox[1]
+
         text_x = (width - text_w) // 2
-        text_y = int(height * 0.08)
+        text_y = (height - text_h) // 2
 
         draw.text((text_x + 2, text_y + 2), text, font=font, fill=(0, 0, 0, 150))
         draw.text((text_x, text_y), text, font=font, fill=(255, 255, 255, 230))

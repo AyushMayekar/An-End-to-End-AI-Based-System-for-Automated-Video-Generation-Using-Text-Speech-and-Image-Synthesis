@@ -44,6 +44,7 @@ VIDEO_RESOLUTION: tuple[int, int] = _RESOLUTIONS.get(
     os.getenv("VIDEO_RESOLUTION", "720p"), (1280, 720)
 )
 VIDEO_FPS: int = 24
+VIDEO_END_BUFFER = 0.5
 
 
 # ── LLM Settings ──────────────────────────────────────────────────────────────
