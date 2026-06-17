@@ -4,18 +4,6 @@ src/image_gen.py
 Module 3: AI Image Generation
 
 WHAT:  Generates 5 historically-styled images for the video frames.
-WHY:   Images provide the visual narrative. Each image maps to a ~2-second
-       "beat" in the video. Quality here directly impacts final output quality.
-HOW:   Primary: Pollinations.ai — 100% free, no API key, no rate limit signup.
-                Just a GET request with a text prompt. Incredible for free tier.
-       Alt 1:  Stability AI free tier — higher quality, requires API key.
-       Alt 2:  Hugging Face Inference API — free tier, slower, many models.
-
-COMMON PITFALLS:
-  - Pollinations.ai can be slow (5-15s per image). Add retries.
-  - Generated faces can be inconsistent across frames. The prompts are designed
-    to minimize this by including clear descriptor anchors.
-  - Always save images with sequential numbered names for video assembly order.
 """
 
 import time
@@ -52,17 +40,6 @@ def generate_images(fighter_name: str | None = None) -> list[Path]:
                 output_path,
                 attempt=i,
             )
-        elif settings.IMAGE_PROVIDER == "stability":
-            path = _generate_with_stability(
-                prompt_data["positive"],
-                prompt_data["negative"],
-                output_path,
-            )
-        elif settings.IMAGE_PROVIDER == "huggingface":
-            path = _generate_with_huggingface(
-                prompt_data["positive"],
-                output_path,
-            )
         else:
             raise ValueError(f"Unknown image provider: {settings.IMAGE_PROVIDER}")
 
@@ -82,8 +59,6 @@ def _generate_with_pollinations(
     max_retries: int = 3,
 ) -> Path:
     """
-    Pollinations.ai: Completely free image generation via HTTP GET.
-    URL format: https://image.pollinations.ai/prompt/{encoded_prompt}
 
     Parameters appended as query string:
       - width, height: Image dimensions
@@ -92,7 +67,6 @@ def _generate_with_pollinations(
       - nologo: Remove Pollinations watermark
       - enhance: Auto-enhance prompt quality
 
-    PITFALL: Sometimes returns a 503. Retry with exponential backoff.
     """
     import requests
 
@@ -134,90 +108,6 @@ def _generate_with_pollinations(
     # If all retries fail, create a placeholder image
     log.warning(f"  All retries failed. Creating placeholder image for frame {attempt}.")
     return _create_placeholder_image(output_path, attempt)
-
-
-# ── Stability AI Implementation ────────────────────────────────────────────────
-
-def _generate_with_stability(
-    positive_prompt: str,
-    negative_prompt: str,
-    output_path: Path,
-) -> Path:
-    """
-    Stability AI: Higher quality images, free tier available.
-    Free tier: 25 credits/month (~25 images at default settings).
-    API docs: https://platform.stability.ai/docs/api-reference
-
-    Install: pip install stability-sdk  OR use requests directly
-    """
-    import requests
-
-    if not settings.STABILITY_API_KEY:
-        raise EnvironmentError(
-            "STABILITY_API_KEY not set. "
-            "Add it to .env or switch IMAGE_PROVIDER to pollinations."
-        )
-
-    url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
-    headers = {
-        "Authorization": f"Bearer {settings.STABILITY_API_KEY}",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
-    body = {
-        "text_prompts": [
-            {"text": positive_prompt, "weight": 1.0},
-            {"text": negative_prompt, "weight": -1.0},  # Negative prompt
-        ],
-        "cfg_scale": 7,
-        "width": min(settings.IMAGE_WIDTH, 1024),   # SDXL max is 1024
-        "height": min(settings.IMAGE_HEIGHT, 1024),
-        "samples": 1,
-        "steps": 30,
-    }
-
-    response = requests.post(url, headers=headers, json=body, timeout=60)
-    response.raise_for_status()
-
-    import base64
-    image_data = response.json()["artifacts"][0]["base64"]
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_bytes(base64.b64decode(image_data))
-    return output_path
-
-
-# ── Hugging Face Implementation ────────────────────────────────────────────────
-
-def _generate_with_huggingface(prompt: str, output_path: Path) -> Path:
-    """
-    Hugging Face Inference API: Free tier available.
-    Uses stabilityai/stable-diffusion-2-1 model.
-    Free tier: Rate-limited but functional for occasional use.
-
-    Get token: https://huggingface.co/settings/tokens (free account)
-    """
-    import requests
-
-    hf_token = os.environ.get("HF_API_TOKEN", "")
-    api_url = (
-        "https://api-inference.huggingface.co/models/"
-        "stabilityai/stable-diffusion-2-1"
-    )
-    headers = {"Authorization": f"Bearer {hf_token}"} if hf_token else {}
-    payload = {"inputs": prompt}
-
-    response = requests.post(api_url, headers=headers, json=payload, timeout=90)
-
-    if response.status_code == 503:
-        # Model is loading — wait and retry
-        log.warning("  HuggingFace model loading. Waiting 20s...")
-        time.sleep(20)
-        response = requests.post(api_url, headers=headers, json=payload, timeout=90)
-
-    response.raise_for_status()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_bytes(response.content)
-    return output_path
 
 
 # ── Placeholder Image Fallback ─────────────────────────────────────────────────
@@ -263,9 +153,6 @@ def _create_placeholder_image(output_path: Path, frame_num: int) -> Path:
     except Exception as e:
         log.error(f"  Could not create placeholder: {e}")
         raise
-
-
-import os  # Needed for HuggingFace token lookup above
 
 
 # ── Standalone test ────────────────────────────────────────────────────────────

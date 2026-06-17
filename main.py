@@ -1,8 +1,4 @@
 """
-main.py
-────────
-Freedom Fighter Video Generator — Main Orchestrator
-
 Entry point for the complete pipeline. Runs all 4 modules in sequence
 with progress tracking, error handling, and final summary.
 
@@ -11,14 +7,6 @@ Usage:
     python main.py "Rani Lakshmibai"        # Override fighter name
     python main.py "Subhas Chandra Bose" --tts edge_tts
     python main.py --list-fighters          # Show example fighters
-
-Steps:
-    1. Validate configuration
-    2. Generate narration script (LLM)
-    3. Generate audio (TTS)
-    4. Generate images (AI image generation)
-    5. Assemble final video (MoviePy)
-    6. Print summary
 """
 
 import argparse
@@ -101,7 +89,7 @@ def list_suggested_fighters() -> None:
         "Lala Lajpat Rai    — Punjab Kesari",
         "Chandra Shekhar Azad — 'Never be caught alive'",
     ]
-    print("\n🇮🇳  Suggested Indian Freedom Fighters:")
+    print("\nSuggested Indian Freedom Fighters:")
     print("─" * 55)
     for f in fighters:
         print(f"  {f}")
@@ -112,8 +100,8 @@ def list_suggested_fighters() -> None:
 def print_banner() -> None:
     print("""
 ╔══════════════════════════════════════════════════════════╗
-║     🇮🇳  Freedom Fighter Video Generator  🇮🇳            ║
-║     AI-Powered | CPU-Friendly | Zero Cost               ║
+║     Freedom Fighter Video Generator                      ║
+║     AI-Powered | CPU-Friendly | Zero Cost                ║
 ╚══════════════════════════════════════════════════════════╝
     """)
 
@@ -209,7 +197,7 @@ def main() -> None:
         from src.text_gen import generate_script
         script = generate_script(fighter_name)
         print(f"\n📝 Generated Script Preview:")
-        print(f"   {script[:150]}..." if len(script) > 150 else f"   {script}")
+        print(f"   {script[:15]}..." if len(script) > 15 else f"   {script}")
         print(f"   ({len(script.split())} words)")
     except Exception as e:
         log.error(f"Script generation failed: {e}")

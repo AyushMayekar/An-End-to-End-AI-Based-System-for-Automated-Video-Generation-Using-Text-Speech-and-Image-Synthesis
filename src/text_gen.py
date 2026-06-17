@@ -3,11 +3,7 @@ src/text_gen.py
 ────────────────
 Module 1: Script Generation via LLM
 
-WHAT:  Generates a 70-85 word narration script for the freedom fighter intro.
-WHY:   The script is the backbone — audio timing, image selection, and video
-       pacing all depend on a well-structured, correctly-lengthed script.
-HOW:   Primary: Groq API (llama-3.1-8b-instant) — free, 30 req/min, sub-2-second latency.
-       Fallback: Google Gemini 1.5 Flash — free tier, 15 RPM, 1M tokens/day.
+WHAT:  Generates a 10-15 word narration script for the freedom fighter intro.
 """
 
 import time
@@ -26,7 +22,7 @@ def generate_script(fighter_name: str | None = None) -> str:
         fighter_name: Name of the freedom fighter. Falls back to settings.
 
     Returns:
-        Script text as a string (~70-85 words).
+        Script text as a string (~10-15 words).
 
     Raises:
         RuntimeError: If both primary and fallback providers fail.
@@ -39,17 +35,15 @@ def generate_script(fighter_name: str | None = None) -> str:
     # Try primary provider
     if settings.LLM_PROVIDER == "groq":
         script = _generate_with_groq(prompt, fighter_name)
-    elif settings.LLM_PROVIDER == "gemini":
-        script = _generate_with_gemini(prompt, fighter_name)
     else:
         raise ValueError(f"Unknown LLM provider: {settings.LLM_PROVIDER}")
 
     # Validate output
     word_count = len(script.split())
     log.info(f"✅ Script generated — {word_count} words")
-    if word_count < 60 or word_count > 100:
+    if word_count < 10 or word_count > 20:
         log.warning(
-            f"Word count {word_count} is outside 70-85 target. "
+            f"Word count {word_count} is outside 10-20 target. "
             "Video timing may be slightly off."
         )
 
@@ -64,8 +58,6 @@ def _generate_with_groq(prompt: dict, fighter_name: str) -> str:
     """
     Generate script using Groq API.
 
-    Free tier: 30 requests/minute, 14,400 req/day.
-    Model: llama-3.1-8b-instant — best quality on free tier.
     """
     try:
         from groq import Groq
@@ -91,43 +83,6 @@ def _generate_with_groq(prompt: dict, fighter_name: str) -> str:
     elapsed = time.time() - start
     script = response.choices[0].message.content.strip()
     log.debug(f"Groq responded in {elapsed:.2f}s")
-    return script
-
-
-# ── Gemini Fallback ────────────────────────────────────────────────────────────
-
-def _generate_with_gemini(prompt: dict, fighter_name: str) -> str:
-    """
-    Generate script using Google Gemini 1.5 Flash.
-
-    Free tier: 15 RPM, 1 million tokens/day.
-    Requires: pip install google-generativeai
-    """
-    try:
-        import google.generativeai as genai
-    except ImportError:
-        raise ImportError(
-            "google-generativeai package not installed. "
-            "Run: pip install google-generativeai"
-        )
-
-    genai.configure(api_key=settings.GEMINI_API_KEY)
-    model = genai.GenerativeModel(
-        model_name=settings.GEMINI_MODEL,
-        system_instruction=prompt["system"],
-        generation_config=genai.types.GenerationConfig(
-            temperature=settings.GEMINI_TEMPERATURE,
-            max_output_tokens=settings.GROQ_MAX_TOKENS,
-        ),
-    )
-
-    log.debug(f"Calling Gemini API (model: {settings.GEMINI_MODEL})...")
-    start = time.time()
-    response = model.generate_content(prompt["user"])
-    elapsed = time.time() - start
-
-    script = response.text.strip()
-    log.debug(f"Gemini responded in {elapsed:.2f}s")
     return script
 
 

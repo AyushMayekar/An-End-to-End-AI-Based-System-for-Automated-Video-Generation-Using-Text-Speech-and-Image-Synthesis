@@ -4,24 +4,7 @@ src/video_gen.py
 Module 4: Video Assembly via MoviePy
 
 WHAT:  Assembles images + audio + text overlays into the final MP4 video.
-WHY:   This is the final integration step. Quality here = quality of submission.
-HOW:   Uses MoviePy — pure Python, CPU-only, no GPU needed.
-       Pipeline:
-         1. Load all images → ImageClips
-         2. Apply Ken Burns effect (slow zoom/pan) for cinematic feel
-         3. Add crossfade transitions between images
-         4. Load audio → AudioFileClip
-         5. Add title card overlay (fighter name)
-         6. Add outro card ("Jai Hind")
-         7. Composite everything → final MP4
 
-COMMON PITFALLS:
-  - MoviePy requires imagemagick for TextClip on Windows.
-    We provide a PIL-based text overlay fallback to avoid this dependency.
-  - ffmpeg must be available. MoviePy downloads it automatically via
-    imageio-ffmpeg. If not: pip install imageio-ffmpeg
-  - Use codec='libx264' for broad compatibility.
-  - Always set audio_codec='aac' for MP4 container.
 """
 
 from __future__ import annotations 
@@ -212,17 +195,6 @@ def _create_image_clip_with_kenburns(
     frame_index: int,
     resolution: tuple[int, int],
 ) -> ImageClip:
-    """
-    Apply Ken Burns effect (slow zoom/pan) to a static image.
-
-    The Ken Burns effect makes static images feel cinematic by slowly
-    zooming in or panning across the image. It's used in every
-    professional documentary and massively elevates video quality.
-
-    We alternate zoom direction based on frame index for visual variety:
-    - Even frames: zoom in (slow push toward subject)
-    - Odd frames:  zoom out (slow pull away)
-    """
     from PIL import Image
     import numpy as np
 

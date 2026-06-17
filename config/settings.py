@@ -16,9 +16,6 @@ load_dotenv(BASE_DIR / ".env")
 
 # ── API Keys ───────────────────────────────────────────────────────────────────
 GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-ELEVENLABS_API_KEY: str = os.getenv("ELEVENLABS_API_KEY", "")
-STABILITY_API_KEY: str = os.getenv("STABILITY_API_KEY", "")
 
 
 # ── Subject ────────────────────────────────────────────────────────────────────
@@ -52,15 +49,10 @@ GROQ_MODEL: str = "llama-3.1-8b-instant"          # Fast, free, high quality
 GROQ_TEMPERATURE: float = 0.7
 GROQ_MAX_TOKENS: int = 300                   # ~150 words = ~10 sec narration
 
-GEMINI_MODEL: str = "gemini-1.5-flash"
-GEMINI_TEMPERATURE: float = 0.7
-
 
 # ── TTS Settings ──────────────────────────────────────────────────────────────
 GTTS_LANGUAGE: str = "en"
 GTTS_TLD: str = "co.in"                      # Indian English accent
-EDGE_TTS_VOICE: str = "en-IN-NeerjaNeural"   # Indian English, female voice
-ELEVENLABS_VOICE_ID: str = "21m00Tcm4TlvDq8ikWAM"  # Rachel voice
 
 
 # ── Image Settings ─────────────────────────────────────────────────────────────
@@ -101,9 +93,4 @@ def validate() -> None:
         raise EnvironmentError(
             "GROQ_API_KEY is not set. "
             "Get a free key at https://console.groq.com and add it to .env"
-        )
-    if LLM_PROVIDER == "gemini" and not GEMINI_API_KEY:
-        raise EnvironmentError(
-            "GEMINI_API_KEY is not set. "
-            "Get a free key at https://aistudio.google.com/app/apikey"
         )
