@@ -7,14 +7,16 @@
 
 1. [What It Does](#what-it-does)
 2. [Architecture](#architecture)
-3. [Prerequisites](#prerequisites)
-4. [Quick Setup (5 Minutes)](#quick-setup)
-5. [API Keys Setup](#api-keys)
-6. [Running the Pipeline](#running)
-7. [Configuration Reference](#config)
-8. [Prompt Engineering Strategy](#prompts)
-9. [Troubleshooting](#troubleshooting)
-10. [Project Structure](#structure)
+3. [Tech Stack](#tech-stack)
+4. [Prerequisites](#prerequisites)
+5. [Quick Setup](#quick-setup)
+6. [API Keys](#api-keys)
+7. [Running the Pipeline](#running-the-pipeline)
+8. [Configuration Reference](#configuration-reference)
+9. [Prompt Engineering Strategy](#prompt-engineering-strategy)
+10. [Troubleshooting](#troubleshooting)
+11. [Project Structure](#project-structure)
+
 
 ---
 
@@ -22,13 +24,10 @@
 
 This pipeline automatically:
 
-1. **Generates a narration script** — Uses Groq (free LLM API) to write a cinematic 70-85 word script about your chosen freedom fighter
-2. **Converts script to speech** — Uses gTTS (Google TTS, free, no key needed) with Indian English accent
-3. **Generates 5 AI images** — Uses Pollinations.ai (completely free, no sign-up) with cinematic prompts
-4. **Assembles the video** — Uses MoviePy (CPU-only) with Ken Burns effects, crossfade transitions, and title overlays
-
-**Total cost: ₹0 / $0**  
-**Hardware requirement: Any Windows laptop with internet**
+1. **Generates a narration script**: Uses Groq (free LLM API) to write a cinematic 10-15 word script about your chosen freedom fighter
+2. **Converts script to speech**: Uses gTTS (Google TTS, free, no key needed) with Indian English accent
+3. **Generates 5 AI images**: Uses Pollinations.ai (completely free, no sign-up) with cinematic prompts
+4. **Assembles the video**: Uses MoviePy (CPU-only) with Ken Burns effects, crossfade transitions, and title overlays
 
 ---
 
@@ -46,7 +45,7 @@ main.py (orchestrator)
 
 ## Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 
 - Windows 10/11
 - Internet connection
 - Free Groq API key (takes 2 minutes to get)
@@ -59,8 +58,10 @@ main.py (orchestrator)
 
 ```bash
 # If you have git:
-git clone <your-repo-url>
-cd freedom_fighter_video
+
+git clone https://github.com/AyushMayekar/An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-and-Image-Synthesis.git
+
+cd An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-and-Image-Synthesis
 
 # Or just download and extract the ZIP
 ```
@@ -69,16 +70,13 @@ cd freedom_fighter_video
 
 ```bash
 # Open Command Prompt or PowerShell
-python -m venv venv
-
-# Activate it
-venv\Scripts\activate
+pip install uv
 ```
 
 ### Step 3: Install dependencies
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 > ⚠️ **If moviepy installation is slow**, it's downloading ffmpeg. This is normal. Wait 2-5 minutes.
@@ -96,7 +94,7 @@ notepad .env
 ### Step 5: Run the pipeline
 
 ```bash
-python main.py "Bhagat Singh"
+uv run python main.py "Bhagat Singh"
 ```
 
 ---
@@ -112,15 +110,6 @@ python main.py "Bhagat Singh"
    ```
    GROQ_API_KEY=gsk_your_key_here
    ```
-
-### Other Keys (All Optional)
-
-| Key | Service | Where to Get | Why Use It |
-|-----|---------|-------------|-----------|
-| `GEMINI_API_KEY` | Google Gemini | https://aistudio.google.com | Fallback LLM |
-| `ELEVENLABS_API_KEY` | ElevenLabs | https://elevenlabs.io | Better voice quality |
-| `STABILITY_API_KEY` | Stability AI | https://platform.stability.ai | Better images |
-
 ---
 
 ## Running the Pipeline
@@ -129,31 +118,25 @@ python main.py "Bhagat Singh"
 
 ```bash
 # Default fighter from .env
-python main.py
+uv run python main.py
 
 # Specify a fighter
-python main.py "Rani Lakshmibai"
-python main.py "Subhas Chandra Bose"
-python main.py "Chandra Shekhar Azad"
+uv run python main.py "Rani Lakshmibai"
+uv run python main.py "Subhas Chandra Bose"
+uv run python main.py "Chandra Shekhar Azad"
 ```
 
 ### Advanced Options
 
 ```bash
-# Use better TTS voice (requires no extra key)
-python main.py "Bhagat Singh" --tts edge_tts
-
 # Generate more frames for smoother video
-python main.py "Bhagat Singh" --images 8
-
-# Use Gemini instead of Groq for script
-python main.py "Bhagat Singh" --llm gemini
+uv run python main.py "Bhagat Singh" --images 8
 
 # Skip regenerating images (reuse existing ones)
-python main.py "Bhagat Singh" --skip-images
+uv run python main.py "Bhagat Singh" --skip-images
 
 # See list of suggested freedom fighters
-python main.py --list-fighters
+uv run python main.py --list-fighters
 ```
 
 ### Expected Output
@@ -176,9 +159,9 @@ Edit `.env` to customize behavior:
 | Variable | Default | Options | Description |
 |----------|---------|---------|-------------|
 | `FREEDOM_FIGHTER_NAME` | `Bhagat Singh` | Any name | The subject of the video |
-| `LLM_PROVIDER` | `groq` | `groq`, `gemini` | LLM for script generation |
-| `TTS_PROVIDER` | `gtts` | `gtts`, `edge_tts`, `elevenlabs` | Text-to-speech engine |
-| `IMAGE_PROVIDER` | `pollinations` | `pollinations`, `stability`, `huggingface` | Image generation service |
+| `LLM_PROVIDER` | `groq` | `groq` | LLM for script generation |
+| `TTS_PROVIDER` | `gtts` | `gtts` | Text-to-speech engine |
+| `IMAGE_PROVIDER` | `pollinations` | `pollinations`| Image generation service |
 | `IMAGE_COUNT` | `5` | `3`-`10` | Number of video frames |
 | `VIDEO_RESOLUTION` | `720p` | `480p`, `720p`, `1080p` | Output resolution |
 | `VIDEO_DURATION` | `10` | `8`-`15` | Target duration (seconds) |
@@ -189,29 +172,44 @@ Edit `.env` to customize behavior:
 
 ### Script Prompt Design
 
-The narration script prompt uses a **5-layer engineering approach**:
+The narration prompt uses a **5-layer engineering approach**:
 
-1. **Role Assignment**: "You are a world-class documentary narrator..." — shifts the model toward authoritative, cinematic language
-2. **Emotional Arc Constraint**: Explicitly defines a 3-part structure (Hook → Achievement → Legacy) for narrative coherence
-3. **Format Constraint**: "Exactly 70-85 words" — maps to precisely ~10 seconds of TTS at 140 wpm
-4. **Negative Constraint**: "No bullet points, no headers" — prevents the model's default structured-output bias
-5. **Quality Anchor**: "BBC historical documentaries" — references a known quality standard the model can emulate
+1. **Role Assignment**: *"You are an award-winning documentary narrator specializing in Indian history..."*, shifts the model toward authoritative, cinematic storytelling instead of generic encyclopedic output.
+
+2. **Context Anchoring**: Explicitly grounds the model in the Indian freedom movement and historical documentary domain, improving factual relevance and reducing hallucinations.
+
+3. **Format Constraint**: *"Output EXACTLY 15 words"* and *"Use a SINGLE sentence only"*, maps precisely to a ~10-second narration window while enforcing concise, high-impact storytelling.
+
+4. **Negative Constraint**: *"No titles, notes, explanations, quotes, markdown, emojis, or bullet points"*, prevents the model's default tendency toward structured or conversational responses.
+
+5. **Quality Anchor**: *"Maintain a respectful, authoritative BBC documentary tone"*, references a recognizable narrative standard to improve consistency, emotional impact, and output quality.
 
 ### Image Prompt Design
 
 Each image prompt follows a **5-component structure**:
-```
-[Subject + Identity] + [Setting + Era] + [Mood + Emotion] + [Composition] + [Technical Style]
+
+```text
+[Subject Priority] + [Historical Context] + [Narrative Beat] + [Composition & Mood] + [Technical Style]
 ```
 
-The 5 images map to a **visual timeline**:
-- Frame 1 (0-2s): Iconic portrait — establish the person
-- Frame 2 (2-4s): Historical context — their era
-- Frame 3 (4-6s): Defining moment — their key action
-- Frame 4 (6-8s): Symbol of freedom — what they stood for
-- Frame 5 (8-10s): Timeless tribute — how India honors them
+Every prompt includes three global constraints:
+
+* **Subject Consistency**: The freedom fighter remains the dominant focal point across all frames with consistent facial features, attire, age, and expression.
+* **Historical Authenticity**: All visuals are grounded in 1920s–1940s British colonial India using period-accurate settings, clothing, and symbolism.
+* **Negative Prompting**: Modern objects, text overlays, distorted anatomy, low-quality outputs, and stylistic inconsistencies are explicitly prohibited.
+
+The 5 images map to a **visual narrative arc**:
+
+* **Frame 1 (0–2s): Iconic Portrait**: establish identity and emotional connection.
+* **Frame 2 (2–4s): Historical Context**: situate the subject within the Indian independence movement.
+* **Frame 3 (4–6s): Defining Moment**: depict their most significant contribution or sacrifice.
+* **Frame 4 (6–8s): Legacy**: symbolize the values and ideals they represent.
+* **Frame 5 (8–10s): Remembrance**: conclude with a respectful tribute to their enduring impact.
 
 ---
+
+This prompt architecture ensures that narration, visuals, and timing remain tightly aligned, producing historically grounded, emotionally engaging, and visually coherent short-form videos.
+
 
 ## Troubleshooting
 
@@ -220,7 +218,6 @@ The 5 images map to a **visual timeline**:
 
 ### "gTTS request failed"
 → Check your internet connection. gTTS requires internet access.
-→ Try: `TTS_PROVIDER=edge_tts` in `.env`
 
 ### "Pollinations returned 503"
 → Pollinations.ai is sometimes slow. The code retries automatically.
@@ -228,56 +225,60 @@ The 5 images map to a **visual timeline**:
 
 ### "moviepy not found" or video assembly fails
 ```bash
-pip install moviepy imageio-ffmpeg
+uv add moviepy imageio-ffmpeg
 ```
 
 ### "No module named 'PIL'"
 ```bash
-pip install Pillow
+uv add Pillow
 ```
-
-### Video is too short or too long
-→ Audio duration controls video duration. Adjust your TTS provider.
-→ `edge_tts` typically produces more natural pacing than `gtts`.
 
 ### Images look wrong / placeholder images appear
 → Pollinations.ai may be rate-limiting. Wait 1-2 minutes and re-run with `--skip-audio`.
-→ Or switch to `IMAGE_PROVIDER=stability` with a free Stability AI key.
+
 
 ---
 
 ## Project Structure
 
-```
-freedom_fighter_video/
-├── .env                    ← Your API keys (never commit this!)
-├── .env.example            ← Template for .env
-├── requirements.txt        ← Python dependencies
-├── README.md               ← This file
-├── main.py                 ← Entry point
+```text
+An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-and-Image-Synthesis/
+├── README.md                     ← Project overview, setup instructions, and usage guide
+├── main.py                       ← Application entry point; orchestrates the entire pipeline
+├── pyproject.toml                ← Project metadata and dependency definitions for uv
+├── uv.lock                       ← Locked dependency versions for reproducible environments
+├── .env.example                  ← Template for required environment variables
 │
 ├── config/
-│   └── settings.py         ← All configuration in one place
-│
-├── src/
-│   ├── text_gen.py         ← Module 1: Script generation (Groq/Gemini)
-│   ├── audio_gen.py        ← Module 2: TTS audio (gTTS/edge-tts/ElevenLabs)
-│   ├── image_gen.py        ← Module 3: Image generation (Pollinations.ai)
-│   └── video_gen.py        ← Module 4: Video assembly (MoviePy)
+│   ├── __init__.py
+│   └── settings.py               ← Centralized configuration (API keys, paths, models, settings)
 │
 ├── prompts/
-│   └── prompt_templates.py ← All LLM and image prompts
+│   ├── __init__.py
+│   └── prompt_templates.py       ← All narration, image, and overlay prompt templates
+│
+├── src/
+│   ├── __init__.py
+│   ├── text_gen.py               ← Module 1: Narration script generation (Groq)
+│   ├── audio_gen.py              ← Module 2: Text-to-speech generation (gTTS)
+│   ├── image_gen.py              ← Module 3: Historical image generation (Pollinations.ai)
+│   └── video_gen.py              ← Module 4: Video assembly and rendering (MoviePy)
+│
+├── tests/
+│   └── test_pipeline.py          ← End-to-end validation and integration tests
 │
 ├── utils/
-│   ├── logger.py           ← Colored logging
-│   └── file_utils.py       ← File I/O helpers
+│   ├── __init__.py
+│   ├── file_utils.py             ← File system helpers and asset management utilities
+│   └── logger.py                 ← Structured, colorized logging configuration
 │
 └── assets/
-    ├── images/             ← Generated frames (frame_01.jpg ... frame_05.jpg)
-    ├── audio/              ← Generated narration (narration.mp3)
-    ├── music/              ← Optional background music
-    └── output/             ← Final video (freedom_fighter_intro.mp4)
+    ├── images/                   ← Generated image frames (frame_01.jpg ... frame_05.jpg)
+    ├── audio/                    ← Generated narration audio files (.mp3)
+    ├── music/                    ← Optional background music assets
+    └── output/                   ← Final rendered videos (.mp4)
 ```
+
 
 ---
 
@@ -289,7 +290,7 @@ freedom_fighter_video/
 | TTS | gTTS (Google) | Free, unlimited, no key needed |
 | Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
 | Video Assembly | MoviePy | Open source, CPU-only |
-| Python | 3.10+ | Open source |
+| Python | 3.12 | Open source |
 
 ---
 
