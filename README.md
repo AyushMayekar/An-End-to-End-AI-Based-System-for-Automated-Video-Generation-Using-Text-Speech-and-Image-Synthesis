@@ -8,6 +8,7 @@
 1. [What It Does](#what-it-does)
 2. [Architecture](#architecture)
 3. [Tech Stack](#tech-stack)
+4. [Demo Video](#demo)
 4. [Prerequisites](#prerequisites)
 5. [Quick Setup](#quick-setup)
 6. [API Keys](#api-keys)
@@ -53,6 +54,14 @@ main.py (orchestrator)
 | Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
 | Video Assembly | MoviePy | Open source, CPU-only |
 | Python | 3.12 | Open source |
+
+---
+
+## Demo
+
+[![Watch Demo](docs/demo-thumbnail.png)](docs/sarojini_naidu_intro.mp4)
+
+*Click the thumbnail to watch the generated video.*
 
 ---
 
