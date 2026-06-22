@@ -3,10 +3,9 @@ Entry point for the complete pipeline. Runs all 4 modules in sequence
 with progress tracking, error handling, and final summary.
 
 Usage:
-    python main.py                          # Uses .env settings
-    python main.py "Rani Lakshmibai"        # Override fighter name
-    python main.py "Subhas Chandra Bose" --tts edge_tts
-    python main.py --list-fighters          # Show example fighters
+    uv run python main.py                          # Uses .env settings
+    uv run python main.py "Rani Lakshmibai"        # Override fighter name
+    uv run python main.py --list-fighters          # Show example fighters
 """
 
 import argparse
@@ -21,11 +20,10 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python main.py
-  python main.py "Bhagat Singh"
-  python main.py "Rani Lakshmibai" --tts edge_tts
-  python main.py "Subhas Chandra Bose" --images 4
-  python main.py --list-fighters
+  uv run python main.py
+  uv run python main.py "Bhagat Singh"
+  uv run python main.py "Subhas Chandra Bose" --images 4
+  uv run python main.py --list-fighters
         """,
     )
     parser.add_argument(
@@ -36,7 +34,7 @@ Examples:
     )
     parser.add_argument(
         "--tts",
-        choices=["gtts", "edge_tts", "elevenlabs"],
+        choices=["gtts"],
         default=None,
         help="Override TTS provider",
     )
@@ -48,13 +46,13 @@ Examples:
     )
     parser.add_argument(
         "--llm",
-        choices=["groq", "gemini"],
+        choices=["groq"],
         default=None,
         help="Override LLM provider",
     )
     parser.add_argument(
         "--image-provider",
-        choices=["pollinations", "stability", "huggingface"],
+        choices=["pollinations"],
         default=None,
         help="Override image generation provider",
     )
@@ -94,7 +92,7 @@ def list_suggested_fighters() -> None:
     for f in fighters:
         print(f"  {f}")
     print("─" * 55)
-    print("\nUsage: python main.py \"Fighter Name\"\n")
+    print("\nUsage: uv run python main.py \"Fighter Name\"\n")
 
 
 def print_banner() -> None:
@@ -172,7 +170,7 @@ def main() -> None:
 
     fighter_name = cfg.FREEDOM_FIGHTER_NAME
     print(f"  Subject: {fighter_name}")
-    print(f"  LLM:     {cfg.LLM_PROVIDER} → {cfg.GROQ_MODEL if cfg.LLM_PROVIDER == 'groq' else cfg.GEMINI_MODEL}")
+    print(f"  LLM:     {cfg.LLM_PROVIDER} → {cfg.GROQ_MODEL}")
     print(f"  TTS:     {cfg.TTS_PROVIDER}")
     print(f"  Images:  {cfg.IMAGE_COUNT} frames via {cfg.IMAGE_PROVIDER}")
     print(f"  Output:  {cfg.VIDEO_RESOLUTION[0]}×{cfg.VIDEO_RESOLUTION[1]} @ {cfg.VIDEO_FPS}fps")
@@ -197,7 +195,8 @@ def main() -> None:
         from src.text_gen import generate_script
         script = generate_script(fighter_name)
         print(f"\n📝 Generated Script Preview:")
-        print(f"   {script[:15]}..." if len(script) > 15 else f"   {script}")
+        preview = " ".join(script.split()[:15])
+        print(f"   {preview}...")
         print(f"   ({len(script.split())} words)")
     except Exception as e:
         log.error(f"Script generation failed: {e}")
@@ -205,7 +204,6 @@ def main() -> None:
         print("\n💡 Troubleshooting:")
         print("   1. Check your GROQ_API_KEY in .env")
         print("   2. Visit https://console.groq.com to verify your key")
-        print("   3. Try: LLM_PROVIDER=gemini in .env")
         sys.exit(1)
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -226,8 +224,6 @@ def main() -> None:
         print(f"\n❌ Audio generation failed: {e}")
         print("\n💡 Troubleshooting:")
         print("   1. Ensure you have internet access (gTTS requires internet)")
-        print("   2. Try: TTS_PROVIDER=edge_tts in .env")
-        print("   3. Run: pip install edge-tts")
         sys.exit(1)
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -276,8 +272,8 @@ def main() -> None:
         log.error(f"Video assembly failed: {e}")
         print(f"\n❌ Video assembly failed: {e}")
         print("\n💡 Troubleshooting:")
-        print("   1. Ensure moviepy is installed: pip install moviepy")
-        print("   2. Ensure ffmpeg is available: pip install imageio-ffmpeg")
+        print("   1. Ensure moviepy is installed: uv add moviepy")
+        print("   2. Ensure ffmpeg is available: uv add imageio-ffmpeg")
         print("   3. Check that all images and audio files exist.")
         sys.exit(1)
 

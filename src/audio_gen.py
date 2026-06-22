@@ -75,7 +75,7 @@ def _generate_with_gtts(script: str, output_path: Path) -> None:
     try:
         from gtts import gTTS
     except ImportError:
-        raise ImportError("gTTS not installed. Run: pip install gTTS")
+        raise ImportError("gTTS not installed. Run: uv add gTTS")
 
     tts = gTTS(
         text=script,

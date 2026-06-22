@@ -62,7 +62,7 @@ def _generate_with_groq(prompt: dict, fighter_name: str) -> str:
     try:
         from groq import Groq
     except ImportError:
-        raise ImportError("groq package not installed. Run: pip install groq")
+        raise ImportError("groq package not installed. Run: uv add groq")
 
     client = Groq(api_key=settings.GROQ_API_KEY)
 

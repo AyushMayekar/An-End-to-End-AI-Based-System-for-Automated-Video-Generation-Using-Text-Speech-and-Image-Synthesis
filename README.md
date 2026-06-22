@@ -16,6 +16,7 @@
 9. [Prompt Engineering Strategy](#prompt-engineering-strategy)
 10. [Troubleshooting](#troubleshooting)
 11. [Project Structure](#project-structure)
+12. [Testing](#testing)
 
 
 ---
@@ -40,6 +41,18 @@ main.py (orchestrator)
 ├── src/image_gen.py  → Pollinations.ai → frame_01-05.jpg
 └── src/video_gen.py  → MoviePy → freedom_fighter_intro.mp4
 ```
+
+---
+
+## Tech Stack
+
+| Component | Tool | Why Free |
+|-----------|------|---------|
+| Script LLM | Groq (llama-3.1-8b-instant) | 30 req/min free, no credit card |
+| TTS | gTTS (Google) | Free, unlimited, no key needed |
+| Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
+| Video Assembly | MoviePy | Open source, CPU-only |
+| Python | 3.12 | Open source |
 
 ---
 
@@ -71,6 +84,8 @@ cd An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speec
 ```bash
 # Open Command Prompt or PowerShell
 pip install uv
+uv venv
+.venv\Scripts\activate
 ```
 
 ### Step 3: Install dependencies
@@ -163,8 +178,9 @@ Edit `.env` to customize behavior:
 | `TTS_PROVIDER` | `gtts` | `gtts` | Text-to-speech engine |
 | `IMAGE_PROVIDER` | `pollinations` | `pollinations`| Image generation service |
 | `IMAGE_COUNT` | `5` | `3`-`10` | Number of video frames |
-| `VIDEO_RESOLUTION` | `720p` | `480p`, `720p`, `1080p` | Output resolution |
-| `VIDEO_DURATION` | `10` | `8`-`15` | Target duration (seconds) |
+| `VIDEO_RESOLUTION` | `720p` | `480p`, `720p`, `1080p` | Output video resolution |
+| `VIDEO_FPS` | `24` | Any positive integer | Number of frames rendered per second |
+| `VIDEO_END_BUFFER` | `0.5` | `0.0`–`2.0` seconds | Additional time added after narration completion for smoother endings and outro transitions |
 
 ---
 
@@ -241,6 +257,8 @@ uv add Pillow
 
 ## Project Structure
 
+> Note: The `assets/` directory is created automatically during the first run if it does not already exist.
+
 ```text
 An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-and-Image-Synthesis/
 ├── README.md                     ← Project overview, setup instructions, and usage guide
@@ -278,20 +296,24 @@ An-End-to-End-AI-Based-System-for-Automated-Video-Generation-Using-Text-Speech-a
     ├── music/                    ← Optional background music assets
     └── output/                   ← Final rendered videos (.mp4)
 ```
-
-
 ---
 
-## Tech Stack
+## Testing
 
-| Component | Tool | Why Free |
-|-----------|------|---------|
-| Script LLM | Groq (llama-3.1-8b-instant) | 30 req/min free, no credit card |
-| TTS | gTTS (Google) | Free, unlimited, no key needed |
-| Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
-| Video Assembly | MoviePy | Open source, CPU-only |
-| Python | 3.12 | Open source |
+Run the validation suite before generating videos:
 
+```bash
+uv run python tests/test_pipeline.py
+```
+
+The test suite verifies:
+
+- Configuration loading
+- API connectivity
+- Dependency installation
+- Audio generation
+- Image generation
+- End-to-end pipeline components
 ---
 
 *Built for the AI Video Generation Assignment — Zero cost, maximum quality.*
