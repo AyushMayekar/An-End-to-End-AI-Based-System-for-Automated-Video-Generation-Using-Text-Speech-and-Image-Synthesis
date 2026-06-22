@@ -329,7 +329,7 @@ def _create_outro_overlay(
     show_duration: float,
 ) -> ImageClip | None:
     """
-    Create 'Jai Hind 🇮🇳' outro text overlay for the final seconds.
+    Create 'Jai Hind' outro text overlay for the final seconds.
     """
     try:
         from PIL import Image, ImageDraw
@@ -339,11 +339,10 @@ def _create_outro_overlay(
         canvas = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(canvas)
 
-        font_size = int(height * 0.05)
+        font_size = int(height * 0.2)
         font = _get_font(font_size)
 
         text = "JAI HIND!!!"
-        font_size = int(height * 0.2)
         text_bbox = draw.textbbox((0, 0), text, font=font)
 
         text_w = text_bbox[2] - text_bbox[0]

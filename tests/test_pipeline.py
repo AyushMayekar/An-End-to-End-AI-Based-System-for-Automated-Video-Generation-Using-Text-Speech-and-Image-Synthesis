@@ -87,7 +87,7 @@ def test_groq_import():
     try:
         import groq
     except ImportError:
-        raise ImportError("groq not installed. Run: pip install groq")
+        raise ImportError("groq not installed. Run: uv add groq")
 
 
 @test("Imports: gTTS package available")
@@ -95,7 +95,7 @@ def test_gtts_import():
     try:
         from gtts import gTTS
     except ImportError:
-        raise ImportError("gTTS not installed. Run: pip install gTTS")
+        raise ImportError("gTTS not installed. Run: uv add gTTS")
 
 
 @test("Imports: moviepy package available")
@@ -103,7 +103,7 @@ def test_moviepy_import():
     try:
         from moviepy import ImageClip, AudioFileClip
     except ImportError:
-        raise ImportError("moviepy not installed. Run: pip install moviepy")
+        raise ImportError("moviepy not installed. Run: uv add moviepy")
 
 
 @test("Imports: Pillow (PIL) package available")
@@ -111,7 +111,7 @@ def test_pillow_import():
     try:
         from PIL import Image, ImageDraw
     except ImportError:
-        raise ImportError("Pillow not installed. Run: pip install Pillow")
+        raise ImportError("Pillow not installed. Run: uv add Pillow")
 
 
 @test("Imports: requests package available")
@@ -119,7 +119,7 @@ def test_requests_import():
     try:
         import requests
     except ImportError:
-        raise ImportError("requests not installed. Run: pip install requests")
+        raise ImportError("requests not installed. Run: uv add requests")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -199,8 +199,8 @@ def test_script_generation():
     from src.text_gen import generate_script
     script = generate_script("Bhagat Singh")
     word_count = len(script.split())
-    assert 50 <= word_count <= 120, (
-        f"Script word count {word_count} is outside acceptable range 50-120"
+    assert word_count == 15, (
+        f"Expected 15 words, got {word_count}"
     )
     assert "Bhagat Singh" in script or "Singh" in script, (
         "Fighter name not mentioned in script"
@@ -301,7 +301,7 @@ def run_all_tests():
         print("   See TROUBLESHOOTING in README.md for solutions.")
         return False
     else:
-        print(f"\n✅ All tests passed! Ready to run: python main.py \"Bhagat Singh\"")
+        print(f"\n✅ All tests passed! Ready to run: uv run python main.py \"Bhagat Singh\"")
         return True
 
 

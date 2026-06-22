@@ -29,7 +29,6 @@ IMAGE_PROVIDER: str = os.getenv("IMAGE_PROVIDER", "pollinations").lower()
 
 
 # ── Video Settings ─────────────────────────────────────────────────────────────
-VIDEO_DURATION: int = int(os.getenv("VIDEO_DURATION", "10"))
 IMAGE_COUNT: int = int(os.getenv("IMAGE_COUNT", "5"))
 
 _RESOLUTIONS = {
