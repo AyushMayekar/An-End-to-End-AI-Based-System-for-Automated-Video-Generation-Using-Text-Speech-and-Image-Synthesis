@@ -8,15 +8,16 @@
 1. [What It Does](#what-it-does)
 2. [Architecture](#architecture)
 3. [Tech Stack](#tech-stack)
-4. [Prerequisites](#prerequisites)
-5. [Quick Setup](#quick-setup)
-6. [API Keys](#api-keys)
-7. [Running the Pipeline](#running-the-pipeline)
-8. [Configuration Reference](#configuration-reference)
-9. [Prompt Engineering Strategy](#prompt-engineering-strategy)
-10. [Troubleshooting](#troubleshooting)
-11. [Project Structure](#project-structure)
-12. [Testing](#testing)
+4. [Demo Video](#demo)
+5. [Prerequisites](#prerequisites)
+6. [Quick Setup](#quick-setup)
+7. [API Keys](#api-keys)
+8. [Running the Pipeline](#running-the-pipeline)
+9. [Configuration Reference](#configuration-reference)
+10. [Prompt Engineering Strategy](#prompt-engineering-strategy)
+11. [Troubleshooting](#troubleshooting)
+12. [Project Structure](#project-structure)
+13. [Testing](#testing)
 
 
 ---
@@ -53,6 +54,14 @@ main.py (orchestrator)
 | Image Gen | Pollinations.ai | 100% free, no sign-up, no key |
 | Video Assembly | MoviePy | Open source, CPU-only |
 | Python | 3.12 | Open source |
+
+---
+
+## Demo
+
+[![Watch Demo](docs/demo-thumbnail.png)](docs/sarojini_naidu_intro.mp4)
+
+*Click the thumbnail to watch the generated video.*
 
 ---
 
