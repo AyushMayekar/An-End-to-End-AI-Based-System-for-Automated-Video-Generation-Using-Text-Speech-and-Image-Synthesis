@@ -59,7 +59,7 @@ main.py (orchestrator)
 
 ## Demo
 
-[![Watch Demo](docs/demo-thumbnail.png)](docs/sarojini_naidu_intro.mp4)
+[![Watch Demo](docs/demo-thumbnail.png)](https://youtu.be/PSHzvhoKIIE)
 
 *Click the thumbnail to watch the generated video.*
 
